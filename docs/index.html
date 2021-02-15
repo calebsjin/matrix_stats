@@ -66,7 +66,7 @@
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">Matrix Algebra From A Statiscian's Perspective</a></li>
+<li><a href="./">Matrix Algebra From A Statistician's Perspective</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
@@ -74,7 +74,7 @@
 <li class="chapter" data-level="2" data-path="submatrices-and-partitioned-matrices.html"><a href="submatrices-and-partitioned-matrices.html"><i class="fa fa-check"></i><b>2</b> Submatrices and Partitioned Matrices</a></li>
 <li class="chapter" data-level="3" data-path="linear-dependence-and-independence.html"><a href="linear-dependence-and-independence.html"><i class="fa fa-check"></i><b>3</b> Linear Dependence and Independence</a></li>
 <li class="divider"></li>
-<li><a href="https://calebsjin.github.io/Matrix_Stats" target="blank">Published with bookdown</a></li>
+<li><a href="https://calebsjin.github.io/matrix_stats" target="blank">Caleb's notes</a></li>
 
 </ul>
 
@@ -160,6 +160,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
