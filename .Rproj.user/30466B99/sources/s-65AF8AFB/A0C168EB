@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1613420083680.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A0C168EB",
+    "lastKnownWriteTime" : 1613426430,
+    "last_content_update" : 1613426430660,
+    "path" : "~/Dropbox/sjin-blog/Matrix_Stats/03-Dependence.Rmd",
+    "project_path" : "03-Dependence.Rmd",
+    "properties" : {
+        "cursorPosition" : "150,348",
+        "scrollLine" : "148"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

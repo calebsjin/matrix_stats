@@ -1,0 +1,16 @@
+bookdown::gitbook:
+  css: style.css
+  config:
+    toc:
+      before: |
+        <li><a href="./">Matrix Algebra From A Statiscian's Perspective</a></li>
+      after: |
+        <li><a href="https://calebsjin.github.io/matrix_stats" target="blank">Caleb's notes</a></li>
+    download: ["pdf", "epub"]
+bookdown::pdf_book:
+  includes:
+    in_header: preamble.tex
+  latex_engine: xelatex
+  citation_package: natbib
+  keep_tex: yes
+bookdown::epub_book: default

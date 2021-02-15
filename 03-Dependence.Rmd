@@ -1,0 +1,152 @@
+---
+header-includes:
+- \usepackage{amssymb}
+- \usepackage{color}
+- \documentclass{article}
+- \usepackage{amsmath}
+- \usepackage{setspace}
+- \usepackage{xcolor}
+- \usepackage{graphicx}
+output:
+pdf_document: newcommandault
+html_document: newcommandault
+---
+<!-- English character -->
+\newcommand{\ua}{{\bf a}} 
+\newcommand{\uA}{{\bf A}}
+\newcommand{\ub}{{\bf b}} 
+\newcommand{\uB}{{\bf B}}
+\newcommand{\uc}{{\bf c}}
+\newcommand{\uC}{{\bf C}}
+\newcommand{\ud}{{\bf d}} 
+\newcommand{\uD}{{\bf D}}
+\newcommand{\ue}{{\bf e}}
+\newcommand{\uE}{{\bf E}}
+\newcommand{\uf}{{\bf f}}
+\newcommand{\uF}{{\bf F}}
+\newcommand{\ug}{{\bf g}}
+\newcommand{\uG}{{\bf G}}
+\newcommand{\uh}{{\bf h}}
+\newcommand{\uH}{{\bf H}} 
+\newcommand{\ui}{{\bf i}}
+\newcommand{\uI}{{\bf I}} 
+\newcommand{\uj}{{\bf j}}
+\newcommand{\uJ}{{\bf J}}
+\newcommand{\uk}{{\bf k}}
+\newcommand{\uK}{{\bf K}}
+\newcommand{\ul}{{\bf l}}
+\newcommand{\uL}{{\bf L}}
+\newcommand{\um}{{\bf m}} 
+\newcommand{\uM}{{\bf M}}
+\newcommand{\un}{{\bf n}}
+\newcommand{\uN}{{\bf N}}
+\newcommand{\uo}{{\bf o}}
+\newcommand{\uO}{{\bf O}}
+\newcommand{\up}{{\bf p}}
+\newcommand{\uP}{{\bf P}}
+\newcommand{\uq}{{\bf q}}
+\newcommand{\uQ}{{\bf Q}}
+\newcommand{\ur}{{\bf r}}
+\newcommand{\uR}{{\bf R}}
+\newcommand{\us}{{\bf s}}
+\newcommand{\uS}{{\bf S}}
+\newcommand{\ut}{{\bf t}}
+\newcommand{\uT}{{\bf T}}
+\newcommand{\uu}{{\bf u}}
+\newcommand{\uU}{{\bf U}}
+\newcommand{\uv}{{\bf v}}
+\newcommand{\uV}{{\bf V}}
+\newcommand{\uw}{{\bf w}}
+\newcommand{\uW}{{\bf W}}
+\newcommand{\ux}{{\bf x}}
+\newcommand{\uX}{{\bf X}} 
+\newcommand{\uy}{{\bf y}} 
+\newcommand{\uY}{{\bf Y}}
+\newcommand{\uz}{{\bf z}}
+\newcommand{\uZ}{{\bf Z}}
+<!-- Greek character -->
+\newcommand\ualpha{{\boldsymbol \alpha}}
+\newcommand{\ubeta}{{\boldsymbol \beta}} 
+\newcommand{\bg}{{\boldsymbol \gamma}}
+\newcommand{\bG}{{\boldsymbol \Gamma}}
+\newcommand{\udelta}{{\boldsymbol \delta}}
+\newcommand{\uDelta}{{\boldsymbol \Delta}}
+\newcommand{\uepsilon}{{\boldsymbol \epsilon}}
+\newcommand{\uvarepsilon}{{\boldsymbol \varepsilon}}
+\newcommand{\uzeta}{{\boldsymbol \zeta}}
+\newcommand{\ueta}{{\boldsymbol \eta}} 
+\newcommand{\utheta}{{\boldsymbol \theta}}
+\newcommand{\uvartheta}{{\boldsymbol \vartheta}}
+\newcommand{\uTheta}{{\boldsymbol \Theta}}
+\newcommand{\uiota}{{\boldsymbol \iota}}
+\newcommand{\ukappa}{{\boldsymbol \kappa}}
+\newcommand{\ulambda}{{\boldsymbol \lambda}}
+\newcommand{\uLambda}{{\boldsymbol \Lambda}}
+\newcommand{\umu}{{\boldsymbol \mu}} 
+\newcommand{\unu}{{\boldsymbol \nu}}
+\newcommand{\uxi}{{\boldsymbol \xi}}
+\newcommand{\uXi}{{\boldsymbol \Xi}}
+\newcommand{\uomicron}{{\boldsymbol \omicron}}
+\newcommand{\uOmicron}{{\boldsymbol \Omicron}}
+\newcommand{\upi}{{\boldsymbol \pi}}
+\newcommand{\uPi}{{\boldsymbol \Pi}}
+\newcommand{\urho}{{\boldsymbol \rho}}
+\newcommand{\uvarrho}{{\boldsymbol \varrho}}
+\newcommand{\usigma}{{\boldsymbol \sigma}}
+\newcommand{\uSigma}{{\boldsymbol \Sigma}}
+\newcommand{\utau}{{\boldsymbol \tau}}
+\newcommand{\uupsilon}{{\boldsymbol \upsilon}}
+\newcommand{\uUpsilon}{{\boldsymbol \Upsilon}}
+\newcommand{\uphi}{{\boldsymbol \phi}}
+\newcommand{\uvarphi}{{\boldsymbol \varphi}}
+\newcommand{\uPhi}{{\boldsymbol \Phi}}
+\newcommand{\uchi}{{\boldsymbol \chi}}
+\newcommand{\upsi}{{\boldsymbol \psi}}
+\newcommand{\uPsi}{{\boldsymbol \Psi}}
+\newcommand{\uomega}{{\boldsymbol\omega}}
+\newcommand{\uOmega}{{\boldsymbol\Omega}}
+<!-- math sign -->
+\newcommand{\0}{{\boldsymbol 0}} 
+\newcommand{\1}{{\boldsymbol 1}} 
+\newcommand{\T}{{\top}} 
+\newcommand{\diag}{{\rm diag}} 
+
+
+# Linear Dependence and Independence
+
+```{definition}
+A nonempty finite set $\{\uA_1,\uA_2,\ldots,\uA_k\}$ of $m\times n$ matrices is said to be
+ *linearly independent* if there exist scalars $x_1,x_2,\ldots,x_k$, not all zero, such that
+$$
+  x_1\uA_1 + x_2\uA_2 + \ldots + x_k\uA_k = 0. 
+$$
+If no such scalars exist, the set is called *linearly independent*.
+```
+
+- The **empty set** is considerted to be linear **independent**.
+
+**Lemma 3.2.4** Let $\uA_1,\uA_2,\ldots,\uA_k$ represent $m\times n$ matrices and are linearly independent. Further, for $j = 1,\ldots,r$, let $\ux_j = (x_{1j}, x_{2j}, \ldots, x_{kj})^{\T}$, and let 
+\[
+\uC_j = x_{1j}\uA_1 + x_{2j}\uA_2 + \ldots + x_{kj}\uA_k.
+\]
+
+Firstly, **If** $\ux_1, \ux_2, \ldots, \ux_r$ are linearly independent, **then** $\uC_1,\uC_2,\ldots,\uC_r$ are linearly independent.
+
+Secondly, **If** $\ux_1, \ux_2, \ldots, \ux_r$ are linearly dependent, **then** $\uC_1,\uC_2,\ldots,\uC_r$ are linearly dependent.
+
+
+Observe that, for any scalars $y_1,y_2,\ldots,y_r$,
+and 
+$$
+  \sum_{j=1}^{r}y_j\ux_j = \left(\sum_{j=1}^{r}y_jx_{1j}, \sum_{j=1}^{r}y_jx_{2j}, \ldots, \sum_{j=1}^{r}y_jx_{kj}\right)^{\T}
+= (z_1,z_2,\ldots,z_k)^{\T}.
+$$
+\begin{eqnarray}
+\sum_{j=1}^{r}y_j\uC_j &=& \left(\sum_{j=1}^{r}y_jx_{1j}\right)\uA_1 + \left(\sum_{j=1}^{r}y_jx_{2j}\right)\uA_2 + \ldots +  \left(\sum_{j=1}^{r}y_jx_{kj}\right)\uA_k \\
+&=& z_1\uA_1 + z_2\uA_2 + \ldots + z_k\uA_k.
+(\#eq:1)
+\end{eqnarray}
+Firstly, If there exits $y_1,y_2,\ldots,y_r$ such that $\sum_{j=1}^{r}y_j\uC_j=\0$, it implies $z_1,z_2,\ldots,z_k$ are 0s in Eq. \@ref(eq:1), because $\uA_1,\uA_2,\ldots,\uA_k$ are linearly independent. Hence $\sum_{j=1}^{r}y_j\ux_j = 0$, implying (in light of the linear independence of $\ux_1, \ux_2, \ldots, \ux_r$) that $y_1=y_2=\ldots=y_r=0$.
+
+Secondly, suppose $\ux_1, \ux_2, \ldots, \ux_r$ are linearly dependent, then there exists $y_1,y_2,\ldots,y_r$, not all of which are zero, such that $\sum_{j=1}^{r}y_j\ux_j=\0$, implying all $z_1,z_2,\ldots,z_k$ are zero. Hence (in the light of Eq. \@ref(eq:1)) $\sum_{j=1}^{r}y_j\uC_j=0$. Thus, $\uC_1,\uC_2,\ldots,\uC_r$ are linearly independent.
+

@@ -1,0 +1,232 @@
+---
+title: 'Support Vector Machine (SVM)-theory and application in R and Python'
+author: Caleb
+date: '2020-04-05'
+slug: svm
+output:
+  blogdown::html_page:
+    toc: true
+categories:
+  - note
+tags:
+  - machine learning
+header-includes:
+- \usepackage{amssymb}
+- \usepackage{color}
+- \documentclass{article}
+- \usepackage{amsmath}
+- \usepackage{amsthm}
+- \usepackage{setspace} 
+- \usepackage{xcolor}
+- \usepackage{graphicx}
+---
+\newcommand{\uw}{{\bf w}}
+\newcommand{\ux}{{\bf x}}
+\newcommand{\uX}{{\bf X}} 
+\newcommand{\uy}{{\bf y}} 
+\newcommand{\T}{{\top}}
+\newcommand{\ualpha}{{\boldsymbol \alpha}}
+\maketitle
+
+# Introduction
+
+Support vector machine (SVM) is a supervised learning model with assoicated learning algorithms that analyze data used for classification and regression analysis.^[https://en.wikipedia.org/wiki/Support-vector_machine] The basic SVM is a binary classifer, and can be used in non-linear classification when introducing kernel functions. There are three kinds of SVMs solving three different problem basically. 
+
+- Linearly separable SVM (Hard margin SVM): when the training data is linearly separable, the separating hyper-plane with biggest margin and the corresponding classification decision function is called the linearly separable SVM.
+
+- Nonlinear SVM: 
+
+# Linearly separable SVM
+
+Given a training dataset in the feature space $\mathscr{T} = \{(\ux_1,y_1),(\ux_2,y_2),\ldots, (\ux_n,y_n)\}$, where $\ux_i = (x_i^{(1)}, x_i^{(2)},\ldots, x_i^{(d)})^{\T}\in\mathbb{R}^d, y_i\in\mathscr{Y} = \{+1,-1\}, i = 1,2,\ldots,n$. $\ux_i$ is $i$th instance; $y_i$ is the class label of $\ux_i$. The $\ux_i$ is called a positve (negative) instance when $y_i=+1$ $(y_i=-1)$. 
+
+The target of linearly separable SVM is to find a hyper-plane to separate all positive into one side and all negative ones the other side. The hyper-plane is expressed by the following equation:
+\begin{eqnarray}
+\uw\ux + b = 0 
+(\#eq:hyperplane)
+\end{eqnarray}
+, where $\uw$ is a vector and $b$ is an intercept. The Eq. \@ref(eq:hyperplane) can be denoted by $(\uw,b)$, which is our goal to find. 
+
+When the training dataset is linearly separable, the hyperplane is not unique. Look at Fig. \@ref(fig:svm), for example, many solid lines (hyperplanes) can be obtained by shifting between two dash lines or slightly tilting , they are still able to separate green and blue points completely. Therefore, linearly separable SVM proposes a constrain of maximum margin to find a unique hyperplane. 
+
+```{r svm, echo = F, fig.align='center', fig.cap="linearly separable SVM^[https://www.javatpoint.com/machine-learning-support-vector-machine-algorithm]"}
+knitr::include_graphics("https://live.staticflickr.com/65535/49740264526_9fef526f15.jpg")
+```
+## Functional Margin
+
+- Relative distance. For a hyperplane, $\uw\ux+b=0$, the **relative distance** (not geometric distance) from a point $\ux_i$ to this hyperplane is $|\uw\ux_i+b|$.
+
+  - When $\uw\cdot\ux_i+b>0$, the instance $\ux_i$ is above the hyperplane, and $\ux_i$ is classified by positive. If $y_i=+1$, then the classification is correct. See blue points.
+  
+  - When $\uw\cdot\ux_i+b<0$, the instance $\ux_i$ is below the hyperplane, and $\ux_i$ is classified by negative If $y_i=-1$, then the classification is correct. See green points.
+
+  - Consistency of the sign of $\uw\ux_i+b$ with the sign of its class label $y_i$ can tell the correctness of the classification. 
+
+  - **Functional Margin**. The functional margin of **a sample point $(\ux_i,y_i)$** and a hyperplane $(\uw\ux,b)$ is defined as $\hat\gamma_i(\uw,b) = y_i(\uw\ux+b), i = 1,2,\ldots, n$. The functional margin of **the training dataset $\mathscr{T}$** and a hyperplane $(\uw\ux,b)$ is defined as $\hat\gamma(\uw,b) = \min_i\hat\gamma_i(\uw,b)$.
+
+- Reliability. For a linearly separable SVM, the distance from an instance to the hyperplane indicates the reliability of the classification prediction: the farther an instance to the hyperplane is, the more reliable the classification is, and vice versa. 
+
+- Shortcoming of the functional margin. When $(\uw,b)$ changes proportionally, for example $(10\uw,10b)$, the hyperplane $10\uw+10b=0$ keeps the same. Thus, we introduce geometric margin that makes a unique maximum margin hyperplane (solid line in Fig. \@ref(fig:svm)). 
+
+## Geometric Margin
+
+The geometric distance between $\ux_i$ and the hyperplane $\uw\ux + b = 0$ is given by
+
+$$
+\gamma_i = \frac{|\uw\ux_i+b|}{\|\uw\|}.
+$$
+Similarly, we will choose $(\uw, b)$ to make $\uw\ux + b < 0$ for negative instances, and $> 0$
+for positive instances. Therefore, when a sample point $(\ux_i, y_i)$ is correctly classified, the geometric distance from the hyperplane is $\gamma_i = \frac{y_i(\uw\ux_i+b)}{\|\uw\|}.$
+Thus, **geometric margin** between $(\ux_i, y_i)$ and a hyperplane $(\uw, b)$ is defined as
+$$
+\gamma_i(\uw,b) = \frac{y_i(\uw\ux_i+b)}{\|\uw\|},i=1,2,\ldots,n
+$$
+and **geometric margin** between a training dataset $\mathscr{T}$ and a hyperplane $(\uw, b)$ is defined as
+
+$$
+\gamma(\uw,b)=\min_{\ux_i\in\mathscr{T}}\gamma_i(\uw,b).
+$$
+Note that the geometric margin is scale invariant and it is a function of $(\uw,b)$.
+
+## Linearly Separable SVM as An Optimization Problem
+
+The target of SVM is to find a hyperplane with maximum geometric margin to correctly separate training dataset. The maximum geometric margin is also called maximum hard margin. This goal falls into the description of constraint optimization problems:
+
+\begin{eqnarray}
+&&\max_{\uw,b}\gamma\\
+&& s.t.\quad \frac{y_i(\uw\ux_i+b)}{\|\uw\|}\geq \gamma,i=1,2,\ldots,n (\#eq:gamma)
+\end{eqnarray}
+The inequality in Eq. \@ref(eq:gamma) holds because $\frac{y_i(\uw\ux_i+b)}{\|\uw\|} = \gamma_i(\uw,b) \geq \min_{\ux_i\in\mathscr{T}}\gamma_i(\uw,b) =\gamma$. 
+
+According to connection between functional margin and geometric margin, the above proglem can be converted to:
+\begin{eqnarray}
+&&\max_{\uw,b}\frac{\hat\gamma}{\|\uw\|}\\
+&& s.t.\quad y_i(\uw\ux_i+b)\geq \gamma\|\uw\|,i=1,2,\ldots,n.
+\end{eqnarray}
+Note that for all $i$, 
+$$
+y_i(\uw\ux_i+b)\geq \gamma\|\uw\| \iff y_i\left(\frac{\uw}{\gamma\|\uw\|}\ux_i+\frac{b}{\gamma\|\uw\|}\right) \geq 1.
+$$
+Reparameterizing,
+$$
+\frac{\uw}{\gamma\|\uw\|} \triangleq \tilde\uw,\quad \frac{b}{\gamma\|\uw\|}\triangleq\tilde b.
+$$
+Therefore, the new hyperplane is $(\tilde \uw, \tilde b)$. Suppose a point $(\ux_0,y_0)$ is in the line: $\tilde \uw\ux+\tilde b = \pm1$, then the geometric margin is $\gamma = \frac{|\tilde \uw\ux_0+\tilde b|}{\|\tilde \uw\|} = \frac{1}{\|\tilde \uw\|}$, and functional margin is $\hat\gamma = 1$.
+
+Therefore, Eq. \@ref(eq:gamma) is equivalent to 
+\begin{eqnarray}
+&&\max_{\uw,b}\frac{1}{\|\uw\|}\\
+&& s.t.\quad y_i(\uw\ux_i+ b)\geq 1,i=1,2,\ldots,n.
+\end{eqnarray}
+Note that $\max\frac{1}{\|\uw\|}\iff\min\frac{1}{2}\|\uw\|^2$. Therefore, the SVM for a linearly separable data set is the solution of the following restricted
+convex optimization problem:
+\begin{eqnarray}
+&&\min_{\uw,b}\frac{1}{2}\|\uw\|^2\\
+&& s.t.\quad y_i(\uw\ux_i+ b) - 1\geq ,i=1,2,\ldots,n,
+\end{eqnarray}
+which is a **quadratic convex optimization** problem.
+
+The complete SVM alogrithm can be described as follows:
+
+- _Input_: Linearly separable training dataset $\mathscr{T} = \{(\ux_1,y_1),(\ux_2,y_2),\ldots, (\ux_n,y_n)\}$, where $\ux_i = (x_i^{(1)}, x_i^{(2)},\ldots, x_i^{(d)})^{\T}\in\mathbb{R}^d, y_i\in\mathscr{Y} = \{+1,-1\}, i = 1,2,\ldots,n$.
+
+- _Output_: The separating hyperplane $\uw\ux + b = 0$ and the classification decision
+function.
+
+(1) Find the solution $(\uw^*,b^*)$ of the following restricted optimization question:
+
+\begin{eqnarray}
+\begin{cases}
+\min_{\uw,b}\frac{1}{2}\|\uw\|^2\\
+s.t.\quad y_i(\uw\ux_i+ b) - 1\geq 0,i=1,2,\ldots,n.
+\end{cases}
+\end{eqnarray}
+
+(2) The separating hyperplane is
+$$
+\uw^*\ux + b^* = 0,
+$$
+and the classification decision function is
+$$
+f(\ux) = \text{sign}(\uw^*\ux + b^*).
+$$
+
+## Existence and Uniqueness of SVM Hyperplane
+```{theorem, exi-uniq, name = "Existence and Uniqueness of SVM Hyperplane"}
+If the training dataset $\mathscr{T}$ is linearly separable, then the SVM hyperplane exists and is unique.
+```
+
+**Proof of Existence:** Note that the linearly separability of $\mathscr{T}$ implies there exists a feasible point $(\tilde \uw, \tilde b)$, such that the optimization question is equivalent to 
+
+\begin{eqnarray}
+\begin{cases}
+\min_{\uw,b}\frac{1}{2}\|\uw\|^2 \\
+s.t. \quad y_i(\uw\ux_i+b)-1\geq 0, i = 1,2,\ldots,n,\\
+\|\uw\|\leq\|\tilde\uw\|.
+\end{cases}
+\end{eqnarray}
+Therefore, the feasible region of this optimization question is nonempty and bounded closed set. Note that any continuous function achieves minimum in a nonempty and bounded closed set, os the solution to the optimization question exists. Also, because both positive and negative instances present in $\mathscr{T}$, so for any $(\uw,b)$ with $(\uw,b) = (0,b)$ will not be a feasible point, which implies the solution must satisfy $\uw^*\neq0.\quad\Box$
+
+**Proof of Uniqueness:**
+
+(1) Before showing the uniqueness, we prove the following two statements first:
+
+- There exists $j\in\{i:y_i = 1\}$, such that $\uw^*\ux_j + b^*=1$;
+
+- There exists $j\in\{i:y_i = -1\}$, such that $\uw^*\ux_j + b^*=-1$;
+
+Use contradiction. Suppose the first statement is not true, then
+
+$$\uw^*\ux_j + b^*>1,\quad \text{for } \forall j\in\{i:y_i = 1\}.$$
+Since $\uw^*, b^*$ satisfy the contrains, so 
+$$\uw^*\ux_j + b^*\leq -1,\quad \text{for } \forall j\in\{i:y_i = -1\}.$$
+For any $\alpha\in(0,1)$, let $\tilde\uw = \alpha\uw^*, \tilde b = (b^*+1)\alpha - 1$. Then for any $j\in\{i:y_i = -1\}$,
+$$\tilde\uw\ux_j + \tilde b = \alpha\uw^*\ux_j + (b^*+1)\alpha - 1 = \alpha(\uw^*\ux_j + b^*)+\alpha -1\leq-\alpha+\alpha-1=-1.$$
+For any $j\in\{i:y_i = 1\}$,
+$$\lim_{\alpha\rightarrow 1^-}(\tilde\uw\ux_j + \tilde b) = \lim_{\alpha\rightarrow 1^-}[\alpha(\uw^*\ux_j + b^*)+\alpha -1] = \uw^*\ux_j + b^*\geq 1.$$
+So, we can choose a suitable $\alpha\in(0,1)$ such that
+$$\tilde\uw\ux_j + \tilde b>1\quad  \text{for }\forall j\in\{i:y_i = 1\}.$$
+This implies that $(\tilde\uw,\tilde b)$ is a feasible point. However $\|\tilde\uw\|^2 = \alpha^2\|\uw^*\|^2\leq\|\uw^*\|^2$, which implies $(\uw^*,b^*)$ is not a solution.$\quad\Box$
+
+(2) Now let’s show the uniqueness of SVM hyperplane.
+
+Suppose we have optimal solutions $(\uw^*_1,b^*_1)$ and $(\uw^*_2,b^*_2)$.
+
+First we show that $\uw^*_1  = \uw^*_2$. It is easy to verify that $(\uw,b)$ is a feasible point. Note that we must have $\|\uw^*_1\|  = \|\uw^*_2\|^2=c\geq0.$ Let $\uw = (\uw^*_1+\uw^*_2)/2$, and $b = (b^*_1+b^*_2)/2$. Then $$c\leq\|\uw\| = \frac{1}{2}\|\uw_1^*+\uw^*_2\|\leq\frac{1}{2}(\|\uw_1^*\|+\|\uw^*_2\|)=c.$$
+So equality holds. Hence, $c=\|\uw\|=\frac{1}{2}\sqrt{\|\uw^*_1\|^2 + \|\uw^*_2\|^2 + 2\|\uw^*_1\|\|\uw^*_2\|\cos\theta} = \frac{1}{2}\sqrt{2c^2(\cos\theta+1)}$, where $\theta$ is the angle between $\uw^*_1$ and $\uw^*_2$. Thus we have $\theta=0$ or $\pi$. If $\theta = \pi$, $\uw = 0$, which is impossible because $(\uw,b)$ is a feasible point. Then we mush have $\theta = 0$, which implies $\uw^*_1 = \uw^*_2$.
+
+Finally, we show that $b^*_1 = b^*_2$. From aforementioned, there exists $i,j$ such that $y_i = 1$ and $y_j = -1$. Thus we have
+
+$$
+\uw^*\ux_i + b^*_1 = 1, \quad \uw^*\ux_j + b^*_1 \leq -1
+$$
+and
+$$
+\uw^*\ux_j + b^*_2 = 1, \quad \uw^*\ux_i + b^*_2 \geq 1.
+$$
+This implies $b^*_1 = b^*_2.\quad\blacksquare$
+
+## Support Vectors 
+
+When the training data set $\mathscr{T}$ is linearly separable, the points $\ux_i$ which satisfy
+
+$$\uw\ux_i+b\pm1=0$$
+are called suport vectors.
+
+## Dual Problem
+We regard the solution to optimization problem of the linearly separable SVM as the primary optimization problem.
+\begin{eqnarray}
+&&\min_{\uw,b}\frac{1}{2}\|\uw\|^2 \\
+&&s.t. \quad y_i(\uw\ux_i+b)-1\geq 0, i = 1,2,\ldots,n,
+\end{eqnarray}
+
+We construct the Lagrange function
+
+$$L(\uw,b,\ualpha) = \frac{1}{2}\|\uw\|^2 - \sum\alpha_i[y_i(\uw\ux_i+b)-1],$$
+where $\alpha_i\geq 0, \ualpha = (\alpha_1,\ldots,\alpha_n)$ is the Lagrange multiplier vector. 
+
+```{block,note-text, type = 'rmdnote'}
+This SVM note is mainly referenced by the course Stat 950: Machine Learning-Theory and Application taught by [Dr. Weixing Song](https://weixingsong.weebly.com/) in 2020 Spring, and a book called [Python 大战机器学习](https://book.douban.com/subject/26987890//). I'd like to thank Dr. Song and the author of that book.
+```
+
+

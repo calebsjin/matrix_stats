@@ -1,0 +1,131 @@
+---
+title: Decision Tree
+author: Caleb Jin
+date: '2019-09-27'
+slug: decision-tree
+categories:
+  - note
+tags: []
+output:
+  blogdown:html_page:
+    toc: true
+header-includes:
+- \usepackage{amssymb}
+- \usepackage{color}
+---
+\newcommand\uy{{\bf y}}
+\newcommand\uX{{\bf X}}
+\newcommand\ux{{\bf x}}
+\newcommand\T{{\top}}
+
+Decision tree methods are simple and easy to interprete. It includes regression tree, classification tree. Although they are not competitive with other supervised learning methods in terms of prediction performance, many excellent approaches, such as random forests and boosting, involves decision tree methods and yield a single consensus prediction. These methods combine a large number of trees,  leading to dramatic improvements in prediction accuracy at the cost of interpretation ability and computation burden. 
+
+## Regression Trees {#basic}
+Let's start with a simple model setting. Consider we have a continuous response variable $\uy=(y_1,y_2, \ldots, y_n)$ and one predictor $\ux = (x_1, x_2, \ldots, x_n)^{\T}$.
+
+The decision tree starts with splitting the predictor $\ux$,
+
+- 1) We partition $\ux$ into two distinct regions $R_1(s) = \{\ux|\ux<s\}$ and $R_2(s) = \{\ux|\ux\geq s\}$.
+
+- 2) Since all observations are divided into two regions $R_1(s)$ or $R_2(s)$, we make the same prediction for each region with \[
+\hat y_{R_1}=\frac{1}{n_1}\sum_{i:x_i\in R_1} y_i,\]
+\[\hat y_{R_2}=\frac{1}{n_2}\sum_{i: x_i\in R_2} y_i,\]
+where $n_1$ and $n_2$ are number of observations in $R_1$ and $R_2$, respectively.
+
+**The question is how to determine the value of cutpoint $s$ to partition $\ux$ into $R_1$ and $R_2$**.
+
+From the step 1), We hope this splitting can minimize sum of squares within regions of $\uy$. This leads us to consider a classic criterion, residual sum of squares (RSS):
+\[
+RSS = \sum_{j=1}^{2}\sum_{i:x_i\in R_j(s)}(y_i - \hat y_{R_j})^2.
+\]
+
+Therefore, in the general model setting (consider $p$ many predictors $\ux_j$ for $j=1,2,\ldots,p$), the question is then transferred to: 
+
+- For each predictor $\ux_j$, find the best $s$ value that can minimize RSS. 
+
+- Among $p$ many different RSS, choose the predictor and cutpoint $s$ that resulting splitting has smallest RSS. 
+
+To better understand the details above, we define the pair of half-planes as
+\[
+R_1(j,s) = \{x|\ux_j<s\}\quad \text{and} \quad R_2(j,s) = \{x|\ux_j\geq s\}, 
+\]
+for any $j$ and $s$. And we search $x_j$ and $s$ that minimize the equation
+$$
+\sum_{i:x_{ij}\in R_1(j,s)}(y_i - \hat y_{R_1})^2 + \sum_{i:x_{ij}\in R_2(j,s)}(y_i - \hat y_{R_2})^2.
+$$
+After this process, we split the space of a specific predictor and data into two regions or branches. Within each branch identified previously, repeat this process, seeking the pair $(j,s)$ to minimize RSS. However, we only choose one branch to split into two sub-branches that has minimum RSS compared with RSS of another branch splitting and RSS of mother splitting. Hence, at this stage, we may have three branches or two branches, because possibly no smaller RSS can be found and no further splitting occurs. This process continues until a stopping criterion is reached and obtain $R_1, R_2, \ldots, R_J$.
+
+After the regions $R_1, R_2, \ldots, R_J$ are determined, then we predict the reponse variable for a given test observation set using mean of the training observations in the region to which that test observation belongs. 
+
+### Tree Pruning
+
+The process above may produce good prediction within the training dataset, but it is possible to overfit the data, leading to poor test set prediction. This is due to too complex of resulting tree. 
+
+### Fitting Regression Trees
+I use R code from the book ISLR [@James2014] to illustrate the regression trees. `Boston` data set is used in the R package `MASS`.
+```{r}
+# Load packages
+library(tree)
+library(ISLR)
+library(MASS)
+library(knitr)
+library(corrplot)
+```
+The Boston data frame has 506 rows and 14 columns. This data frame contains the following variables:
+```{r, echo = FALSE}
+Var <- names(Boston)
+Desp <- c('per capita crime rate by town', 'proportion of residential land zoned for lots over 25,000 sq.ft', 
+         'proportion of non-retail business acres per town', 
+         'Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)',
+         'nitrogen oxides concentration (parts per 10 million)', 'average number of rooms per dwelling',
+         'proportion of owner-occupied units built prior to 1940', 'weighted mean of distances to five Boston employment centres',
+         'index of accessibility to radial highways', 'full-value property-tax rate per $10,000',
+         'pupil-teacher ratio by town', '1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town',
+         'lower status of the population (percent)', 'median value of owner-occupied homes in $1000s')
+kable(data.frame(Var, Desp))
+```
+```{r}
+head(Boston)
+M <- cor(Boston)
+corrplot.mixed(M, lower="number", upper="ellipse")
+```
+
+First, a training data is created and I fit a regression tree to the training data. 
+```{r}
+set.seed(1)
+train = sample(1:nrow(Boston), nrow(Boston)/2)
+tree.boston = tree(medv~.,Boston, subset = train)
+summary(tree.boston)
+```
+The output of `summary()` indicates four variables actually used in the tree construction. The number of terminal nodes is 7. deviance is RSS of the tree, which is summation of RSS in 7 terminal nodes. The Residual mean deviance = 10.38 = 2555/246, where 246 = n - \# of nodes = 506/2-7. `tree.boston$frame` below describes the node number, `var` the variable used at the split (or leaf for a terminal node), `n` the sample size of each node, `dev` the deviance, `yval` the fitted value at the node (the mean) and cutpoints for the left and right. 
+```{r}
+tree.boston$frame
+```
+The following result is the value of `dev` and `yval` at the node 1 computed by code. 
+```{r}
+y_train <- Boston[train,]$medv
+dev_yal <- c(sum((y_train - mean(y_train))^2), mean(y_train))
+paste(c('dev', 'yval'), 'is', round(dev_yal,4))
+RSS = sum(tree.boston$frame$dev[c(4,5,8,9,10,12,13)]) 
+paste('RSS of the tree is: ', round(RSS,0))
+```
+Plot the tree. The variable `rm` measures average number of rooms per dwelling. The tree plot displays that more rooms correspond to more expensive houses. The tree predicts a median house price of \$45380 for houses of more numbers of room.  
+
+```{r}
+plot(tree.boston)
+text(tree.boston, pretty = 0)
+large.rm <- Boston[train, ]$rm>=7.553
+y.large.rm <- mean(y_train[large.rm])
+paste('predicted value of median house price of larger house is ', y.large.rm)
+```
+If we go back to this example in the [ISLR](http://faculty.marshall.usc.edu/gareth-james/ISL/), we can discover that with same random seed number, we obtain different results. In [ISLR](http://faculty.marshall.usc.edu/gareth-james/ISL/), `lstat` is the first node, indicating the most important factor that influences the house price. This is due to different random samples we got, although we set the same random seed. Maybe random number generator in different computer is different. If we go to see the result of random forests at page 330, `rm` and `lstat` actually are 2 most important variable. On the other hand, pairwise correlation plot shows that `rm` and `lstat` has strong correlation with median of house price. Hence, with different random sample, we can obtain that either `rm` or `lstat` is at the root node.
+
+Next I use `cv.tree()` function to see whether pruning the tree will improve performance.
+```{r}
+cv.boston = cv.tree(tree.boston)
+plot(cv.boston$size, cv.boston$dev, type = 'b', xlab = 'Size of tree', ylab = 'Deviance')
+cv.boston
+```
+`$size` is the number of terminal nodes and `$k` is $\alpha$.
+
+## Classification Trees

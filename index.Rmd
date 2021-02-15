@@ -1,0 +1,17 @@
+--- 
+title: "Matrix Algebra From A Statistician's Perspective"
+author: "Caleb Jin|金时强"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib]
+biblio-style: apalike
+link-citations: yes
+description: "This is my notes of the book titled 'Matrix Algebra From A Statistician's Perspective' by David A. Harville."
+---
+# Preface {-}
+
+This is my notes of the book titled "[Matrix Algebra From A Statistician's Perspective](https://www.amazon.com/Matrix-Algebra-Statisticians-Perspective-Harville-dp-038794978X/dp/038794978X/ref=mt_other?_encoding=UTF8&me=&qid=1613419633)" by David A. Harville.
+
+Since **Chapter 1**-Mattices and **Chapter 2**-Submatrices and Partitioned Matrices are very simple and basic, I omit both parts.
+

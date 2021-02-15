@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1613416922910.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "EB7BA75",
+    "lastKnownWriteTime" : 1586553355,
+    "last_content_update" : 1586553355,
+    "path" : "~/Dropbox/sjin-blog/sjin.name/content/note/2020-04-05-svm.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "98,37",
+        "scrollLine" : "93"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
